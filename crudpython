@@ -1,0 +1,84 @@
+import mysql.connector
+koneksi = mysql.connector.connect(
+    host="127.0.0.1",
+    user="root",
+    password="",
+    database="crudd_python"
+)
+mycursor = koneksi.cursor()
+lanjut = True
+if lanjut:
+    print("")
+    print("")
+    print("")
+    print("CRUD User")
+    print("1.LIHAT USER")
+    print("2.TAMBAH USER")
+    print("3.UBAH USER")
+    print("4.HAPUS USER")
+    print("5.KELUAR")
+    print("")
+else:
+    print("out..")
+
+
+duy = int(input("PILIH MENU :"))
+print("")
+
+if(duy == 1):
+    mycursor.execute("SELECT * FROM user")
+    myresult = mycursor.fetchall()
+    print("============")
+    print("(id,nama,email,nohp)")
+    for x in myresult:
+        print(x)
+
+elif(duy == 2):
+
+    nama = input("NAMA :")
+    email = input("EMAIL :")
+    nohp = input("NO HP:")
+    sql = "INSERT INTO user (nama, email, nohp) VALUES (%s,%s,%s)"
+    val = (nama, email, nohp)
+    mycursor.execute(sql, val)
+    koneksi.commit()
+    print(mycursor.rowcount, "data user berhasil di tambah")
+
+elif(duy == 3):
+    id = input("ID USER :")
+    mycursor.execute("SELECT * FROM user where id ="+id+" LIMIT 1")
+    myresult = mycursor.fetchall()
+    user = None
+    for x in myresult:
+        user = x
+
+        if(user != None):
+            nama = input("NAMA ("+user[1]+") :") or user[1]
+            email = input("EMAIL ("+user[2]+") :") or user[2]
+            nohp = input("NO HP ("+user[3]+") :") or user[3]
+            sql = "UPDATE user SET nama=%s, email=%s, nohp=%s WHERE id = %s"
+            val = (nama, email, nohp, id)
+            mycursor.execute(sql, val)
+            koneksi.commit()
+            print(mycursor.rowcount, "data user berhasil di simpan")
+        else:
+            print("data tidak di temukan")
+
+elif(duy == 4):
+    id = input("ID USER :")
+    mycursor.execute("SELECT * FROM user where id ="+id+" LIMIT 1")
+    myresult = mycursor.fetchall()
+    user = None
+    for x in myresult:
+        user = x
+
+        if(user != None):
+            print("MENGHAPUS DATA :", user)
+            sql = "DELETE FROM user WHERE id="+id
+            mycursor.execute(sql)
+            koneksi.commit()
+            print(mycursor.rowcount, "data user berhasil di hapus")
+        else:
+            print("data tidak di temukan")
+elif(duy == 5):
+    lanjut = False
